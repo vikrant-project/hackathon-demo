@@ -1,4 +1,3 @@
-```md
 # Privacy-Vision Browser Agent
 ### SIH 2026 — Problem Statement 26171: On-device Visual Perception for Light-weight Browser Agents
 
@@ -27,41 +26,38 @@ This standard paradigm introduces critical architectural bottlenecks:
 
 Our solution implements an end-to-end client-server browser automation pipeline engineered around strict client-side isolation boundaries. High-dimensional visual and DOM data are filtered, tokenized, and sanitized entirely in memory within the local browser runtime before any payload crosses the network boundary.
 
-
 ```
-
 User Task (Text / Voice Input)
-│
-▼
-Browser Extension Context
-│
-▼
-Local Perception Engine (DOM + Layout + Bounding Boxes + Semantics)
-│
-▼
-Privacy Guard (In-Memory Regex, Heuristics, Pattern Masking)
-│
-▼
-Sanitized Context (Abstracted JSON representation)
-│ (Encrypted Network Egress)
-▼
-LLM Orchestration Layer (Gemini-based Reasoning & Planning)
-│
-▼
-Structured Action Directives (ActionSchema: Click, Type, Navigate, etc.)
-│ (Response Stream)
-▼
-Safety Validation Engine (Risk tier verification, Injection detection)
-│
-▼
-Element Registry (Stable ID Resolution, Coordinate/DOM Mapping)
-│
-▼
-Browser Execution Engine (Sandboxed Dispatch to Active Tab)
-│
-▼
-Re-observe State ──► Evaluate Completion / Re-plan Loop
-
+               │
+               ▼
+   Browser Extension Context
+               │
+               ▼
+   Local Perception Engine (DOM + Layout + Bounding Boxes + Semantics)
+               │
+               ▼
+   Privacy Guard (In-Memory Regex, Heuristics, Pattern Masking)
+               │
+               ▼
+       Sanitized Context (Abstracted JSON representation)
+               │ (Encrypted Network Egress)
+               ▼
+   LLM Orchestration Layer (Gemini-based Reasoning & Planning)
+               │
+               ▼
+   Structured Action Directives (ActionSchema: Click, Type, Navigate, etc.)
+               │ (Response Stream)
+               ▼
+   Safety Validation Engine (Risk tier verification, Injection detection)
+               │
+               ▼
+   Element Registry (Stable ID Resolution, Coordinate/DOM Mapping)
+               │
+               ▼
+   Browser Execution Engine (Sandboxed Dispatch to Active Tab)
+               │
+               ▼
+   Re-observe State ──► Evaluate Completion / Re-plan Loop
 ```
 
 ### Layer Descriptions
@@ -88,9 +84,7 @@ Re-observe State ──► Evaluate Completion / Re-plan Loop
 
 ## 4. System Architecture
 
-
 ```
-
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        CLIENT / BROWSER RUNTIME                        │
 │                                                                        │
@@ -108,8 +102,8 @@ Re-observe State ──► Evaluate Completion / Re-plan Loop
 │  │  └──────────────────┘  └────────────────┘  └──────────────────┘  │  │
 │  └──────────────────────────────────┬───────────────────────────────┘  │
 └─────────────────────────────────────┼──────────────────────────────────┘
-│ Sanitized Context (JSON)
-▼
+                                      │ Sanitized Context (JSON)
+                                      ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                          BACKEND SERVER                                │
 │                                                                        │
@@ -124,7 +118,6 @@ Re-observe State ──► Evaluate Completion / Re-plan Loop
 │  │ (Gemini 1.5 / 2.0)   │              │   (Isolated Profile IDs)   │  │
 │  └──────────────────────┘              └────────────────────────────┘  │
 └────────────────────────────────────────────────────────────────────────┘
-
 ```
 
 ### Component Breakdown
@@ -139,23 +132,20 @@ Re-observe State ──► Evaluate Completion / Re-plan Loop
 
 The perception layer extracts a compressed representation of the webpage state without invoking resource-intensive local vision models.
 
-
 ```
-
 Raw Webpage DOM Tree
-│
-▼
+         │
+         ▼
 Filtering Non-Interactive & Hidden Nodes (`display:none`, `visibility:hidden`, `opacity:0`)
-│
-▼
+         │
+         ▼
 Interactive Geometry Calculation (`getBoundingClientRect`, Viewport Clipping)
-│
-▼
+         │
+         ▼
 Semantic Node Classification (ARIA Roles, Tags, Labels, Form Relationships)
-│
-▼
+         │
+         ▼
 Optimized Perception Snapshot (Compact Interactive Array)
-
 ```
 
 ### Perception Capabilities & Verification Matrix
@@ -173,22 +163,19 @@ Optimized Perception Snapshot (Compact Interactive Array)
 
 The Privacy Guard is an in-memory client-side interceptor that validates every string segment prior to transmission.
 
-
 ```
-
 Raw Page Text & Attribute Buffers
-│
-▼
-Regex & Heuristic Scanners
-│
-├─► Pattern Detection (Emails, Phone, Identifiers, API Keys)
-│
-▼
-In-Memory Tokenizer / Masking Table
-│
-▼
-Sanitized Context Envelope (Ready for Network Egress)
-
+               │
+               ▼
+   Regex & Heuristic Scanners
+               │
+               ├─► Pattern Detection (Emails, Phone, Identifiers, API Keys)
+               │
+               ▼
+   In-Memory Tokenizer / Masking Table
+               │
+               ▼
+   Sanitized Context Envelope (Ready for Network Egress)
 ```
 
 ### Detection & Masking Coverage
@@ -196,7 +183,7 @@ Sanitized Context Envelope (Ready for Network Egress)
 * **Phone Numbers:** E.164 and localized 10-digit formats masked to `[REDACTED_PHONE_N]`.
 * **Credential Inputs:** Explicit HTML inputs with `type="password"`, `autocomplete="current-password"`, or security tokens are completely stripped from attribute values.
 * **Financial & Authentication Markers:** Credit card Luhn-valid candidate streams, generic JWT signatures (`ey...`), and standard cloud API key prefixes are neutralized.
-* **National Identifiers:** Heuristic scanning strips high-entropy numeric identification strings (such as 12-digit Aadhaar-like or alphanumeric PAN-like patterns) replacing them with synthetic entity tokens.
+* **National Identifiers:** Heuristic scanning strips high-entropy numeric identification strings (such as 12-digit Indian national ID-like or alphanumeric PAN-like patterns) replacing them with synthetic entity tokens.
 
 ### Leakage Verification Protocol
 Perception payloads are tested via unit tests against synthetic fixtures containing embedded PII strings. The serialized payload is asserted against known sensitive inputs to verify zero string-inclusion before HTTP client dispatch.
@@ -207,18 +194,15 @@ Perception payloads are tested via unit tests against synthetic fixtures contain
 
 Allowing an upstream language model to produce arbitrary CSS selectors or unconstrained XPath strings leads to selector drift, broken execution chains, and potential DOM injection vectors.
 
-
 ```
-
 Live Tab DOM ──► Extract Nodes ──► Assign `elementId` ──► Store live Node reference
-│
+                                                                │
 LLM generates action: { "action": "click", "elementId": 14 } ───┘
-│
+                                                                │
 Resolve live Node reference ◄── Validate active visibility ◄────┘
-│
-▼
+         │
+         ▼
 Dispatch Synthetic Event
-
 ```
 
 * **Deterministic Pointer Assignment:** Every interactable candidate is assigned an integer index (`elementId`) corresponding to its index in the current perception array.
@@ -229,7 +213,7 @@ Dispatch Synthetic Event
 ## 8. Browser Agent & Action Loop
 
 The agent functions via an iterative control loop:
-$$\text{Observe} \longrightarrow \text{Plan} \longrightarrow \text{Validate} \longrightarrow \text{Act} \longrightarrow \text{Re-Observe}$$
+$$	ext{Observe} \longrightarrow 	ext{Plan} \longrightarrow 	ext{Validate} \longrightarrow 	ext{Act} \longrightarrow 	ext{Re-Observe}$$
 
 ### Supported Execution Directives
 | Action | Parameter Schema | Operational Behavior | Status |
@@ -261,18 +245,15 @@ Web pages frequently contain untrusted content, including malicious hidden text 
 
 The safety layer enforces risk classification on all planned actions prior to browser dispatch:
 
-
 ```
-
 Proposed Action Directive
-│
-├── Risk Tier: LOW (navigate, scroll, read, search input) ──► Execute Directly
-│
-└── Risk Tier: HIGH (payment, submission, auth, deletion) ──► Human-in-the-Loop Dialog
-│
-User Confirms: Execute
-User Rejects: Abort Task
-
+           │
+           ├── Risk Tier: LOW (navigate, scroll, read, search input) ──► Execute Directly
+           │
+           └── Risk Tier: HIGH (payment, submission, auth, deletion) ──► Human-in-the-Loop Dialog
+                                                                                │
+                                                                       User Confirms: Execute
+                                                                       User Rejects: Abort Task
 ```
 
 * **Low-Risk Actions:** Navigation, non-sensitive form input, content extraction, page scrolling.
@@ -285,11 +266,8 @@ User Rejects: Abort Task
 
 * **Architecture Status:** **STATUS: PARTIAL / EXPERIMENTAL**
 
-
 ```
-
 User Speech ──► Web Speech API (STT) ──► Text Normalization ──► Agent Core ──► Browser Execution
-
 ```
 
 * **Speech-to-Text (STT):** Implemented via the browser-native `webkitSpeechRecognition` / W3C Web Speech API interface.
@@ -366,9 +344,7 @@ Automated test suites validate parsing integrity, safety boundaries, and sanitiz
 * **Privacy & Redaction Tests:** Synthetic HTML fixtures containing known test vectors (emails, phone numbers, dummy tokens) are passed through the pipeline to assert zero plaintext leakage.
 * **Injection Defense Tests:** Malicious DOM text fixtures containing adversarial prompt injection attacks are tested to verify that the planner ignores them.
 
-
 ```
-
 Test Summary (Latest Suite Run):
 ─────────────────────────────────────────────
 Total Test Cases:       42
@@ -377,7 +353,6 @@ Failed:                 0
 Skipped / Planned:      2 (Local ONNX perception & multi-tab coordinator)
 ─────────────────────────────────────────────
 Status:                 STABLE BUILD PASSING
-
 ```
 
 ---
@@ -386,21 +361,18 @@ Status:                 STABLE BUILD PASSING
 
 Reconstructed directly from the working project demonstration:
 
-
 ```
-
 1. Load Extension: Load unpacked extension directory into Chrome developer mode.
 2. Initialize Backend: Start local API service with configured environment credentials.
-3. Open Target Target Webpage: Navigate browser to target testing environment.
+3. Open Target Webpage: Navigate browser to target testing environment.
 4. Input Objective: User triggers extension popup and types: "Search for laptops and filter lowest price".
 5. Local Extraction: Content script scans viewport, extracts interactive nodes, and assigns elementIds.
 6. Privacy Scrub: Sanitizer scans input text; masks personal or sensitive fields.
 7. Agent Planning: Backend streams sanitized JSON to Gemini, which returns:
-{"action": "type", "elementId": 4, "text": "laptops"} -> {"action": "click", "elementId": 5}
+   {"action": "type", "elementId": 4, "text": "laptops"} -> {"action": "click", "elementId": 5}
 8. Safety Check: Action validated as Low Risk (Search query).
 9. Execution: Content script dispatches synthetic input and click events.
 10. Loop Continuation: Target page updates; agent observes results and displays completion state.
-
 ```
 
 ---
@@ -409,36 +381,28 @@ Reconstructed directly from the working project demonstration:
 
 ### Task: "Find gaming laptops under ₹60,000 on e-commerce store"
 
-
 ```
-
 [OBSERVE]
-
-* Extracted 48 interactive elements.
-* Element 12: 
-* Element 13: Search
+- Extracted 48 interactive elements.
+- Element 12: <input type="text" placeholder="Search products...">
+- Element 13: <button type="submit">Search</button>
 
 [PLAN]
-
-* Step 1: Type "gaming laptops" into Element 12.
-* Step 2: Click Element 13.
+- Step 1: Type "gaming laptops" into Element 12.
+- Step 2: Click Element 13.
 
 [SAFETY VALIDATION]
-
-* Action: "type" | Target: Search input | Risk: LOW (Permitted)
-* Action: "click" | Target: Submit button | Risk: LOW (Permitted)
+- Action: "type" | Target: Search input | Risk: LOW (Permitted)
+- Action: "click" | Target: Submit button | Risk: LOW (Permitted)
 
 [EXECUTE]
-
-* Element 12 focused -> Dispatched keyboard events -> Value updated.
-* Element 13 clicked -> Navigation event triggered.
+- Element 12 focused -> Dispatched keyboard events -> Value updated.
+- Element 13 clicked -> Navigation event triggered.
 
 [RE-OBSERVE]
-
-* Search results loaded.
-* Element 24: 
-* Step 3: Select sort option "Price: Low to High".
-
+- Search results loaded.
+- Element 24: <select id="sort-by">
+- Step 3: Select sort option "Price: Low to High".
 ```
 
 ---
@@ -447,31 +411,33 @@ Reconstructed directly from the working project demonstration:
 
 ### Scenario: Form with sensitive user data
 
-
 ```
-
 [PAGE CONTENT (Local Memory)]
+<div>
+  <label>User Contact Email:</label>
+  <span id="user-email">contact-test@organization.org</span>
+  <label>Phone Number:</label>
+  <span id="user-phone">+91-9876543210</span>
+  <label>Postal Code:</label>
+  <span>110001</span>
+</div>
 
-```
-  │
-  ▼ [LOCAL PRIVACY GUARD EXECUTION]
-  │ Matches: Email Regex -> contact-test@organization.org
-  │ Matches: Phone Regex -> +91-9876543210
-  │
-  ▼ [SANITIZED BUFFER FORMED]
-
-```
+      │
+      ▼ [LOCAL PRIVACY GUARD EXECUTION]
+      │ Matches: Email Regex -> contact-test@organization.org
+      │ Matches: Phone Regex -> +91-9876543210
+      │
+      ▼ [SANITIZED BUFFER FORMED]
 
 [NETWORK PAYLOAD TRANSMITTED TO LLM]
 {
-"visible_text": [
-"User Contact Email: [REDACTED_EMAIL_1]",
-"Phone Number: [REDACTED_PHONE_1]",
-"Postal Code: 110001"
-],
-"interactable_elements": []
+  "visible_text": [
+    "User Contact Email: [REDACTED_EMAIL_1]",
+    "Phone Number: [REDACTED_PHONE_1]",
+    "Postal Code: 110001"
+  ],
+  "interactable_elements": []
 }
-
 ```
 *Result:* The remote reasoning model successfully understands the page structure without receiving actual personal identifiers.
 
@@ -549,13 +515,11 @@ Direct link to demonstration recording:
 
 ### 1. Clone Repository
 ```bash
-git clone [https://github.com/vikrant-project/hackthon-demo.git](https://github.com/vikrant-project/hackthon-demo.git)
+git clone https://github.com/vikrant-project/hackthon-demo.git
 cd hackthon-demo
-
 ```
 
 ### 2. Backend Gateway Setup
-
 ```bash
 # Navigate to backend directory
 cd backend
@@ -574,11 +538,9 @@ cp .env.example .env
 
 # Start backend server
 uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-
 ```
 
 ### 3. Extension Setup
-
 ```bash
 # Navigate to extension directory
 cd ../extension
@@ -588,11 +550,9 @@ npm install
 
 # Build extension if applicable
 npm run build
-
 ```
 
 ### 4. Load Browser Extension
-
 1. Open Google Chrome and navigate to `chrome://extensions/`.
 2. Enable **Developer mode** using the toggle in the top-right corner.
 3. Click **Load unpacked**.
@@ -636,7 +596,6 @@ hackthon-demo/
 │   └── test_privacy.py
 ├── hackthon-demo.mp4
 └── README.md
-
 ```
 
 ---
@@ -644,7 +603,3 @@ hackthon-demo/
 ## 30. License
 
 License: Not specified. Please consult repository maintainers for usage and distribution guidelines.
-
-```
-
-```
