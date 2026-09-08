@@ -5,7 +5,7 @@
 - **Category:** Software
 - **Theme:** Smart Automation
 - **Repository:** [https://github.com/vikrant-project/hackthon-demo](https://github.com/vikrant-project/hackthon-demo)
-- **Demo Video:** [https://github.com/vikrant-project/hackthon-demo/blob/main/hackthon-demo.mp4](https://github.com/vikrant-project/hackthon-demo/blob/main/hackthon-demo.mp4)
+- **Demo Video:** [https://github.com/vikrant-project/hackthon-demo/blob/main/hackthon-demo.mp4](https://github.com/vikrant-project/hackthon-demo/blob/main/hackathon-demo.mp4)
 
 ---
 
